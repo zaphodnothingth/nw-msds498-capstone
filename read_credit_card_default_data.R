@@ -7,17 +7,21 @@
 ##################################################################################
 
 
-# Define path and file;
-# You will need to change the path value to match the location on your own computer;
-this.dir <- dirname(parent.frame(2)$ofile)
-setwd(this.dir)
-my.datapath <- '.\\Data\\';
-my.file <- paste(my.path,'credit_card_default.RData',sep='');
+# Define path and file; set cur to working
+### windows only?
+### this.dir <- dirname(parent.frame(2)$ofile)
+### setwd(this.dir)
+# macos
+completePath<- rstudioapi::getActiveDocumentContext()$path
+nameOfMyFile <- sub(".*/", "", completePath)
+workingDirectoryPath <- gsub(pattern = nameOfMyFile, replacement = "", x = completePath)
+setwd(workingDirectoryPath)
 
+my.datapath <- './Data/';
+my.file <- paste(my.datapath,'credit_card_default.RData',sep='');
 
 # Read the RData object using readRDS();
 credit_card_default <- readRDS(my.file)
-
 
 # Show dataframe structure;
 str(credit_card_default)
@@ -68,16 +72,6 @@ table(credit_card_default$data.group)
 #     1     2     3 
 # 15180  7323  7497 
 
-
-
 # Show top of data frame with some values;
 head(credit_card_default)
-
-# subset the data
-ccd_train <- subset(credit_card_default, train == 1,
-select=ID:u) # drop groups
-ccd_test <- subset(credit_card_default, test == 1,
-select=ID:u) 
-ccd_validate <- subset(credit_card_default, validate == 1,
-select=ID:u) 
 
