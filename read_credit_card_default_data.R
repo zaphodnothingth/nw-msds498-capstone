@@ -107,6 +107,10 @@ credit_card_default %>%
 # 5 MARRIAGE             1 11888     0  1.57 0.519 0.00476     1  -0.0791  -1.37       0     1     1     1     1     1
 # 6 MARRIAGE             2 18112     0  1.54 0.524 0.00389     1   0.0211  -1.35       0     1     1     1     1     1
 
+# run EDA report - install.packages("forecast")
+library(forecast)
 credit_card_default %>%
   eda_paged_report(target = "DEFAULT", subtitle = "cc_default", 
                    output_dir = "./", output_file = "EDA.pdf", theme = "blue")
+
+
