@@ -74,9 +74,13 @@ table(credit_card_default$data.group)
 # Show top of data frame with some values;
 head(credit_card_default)
 
+# drop groups
+ccd_focus <- subset(credit_card_default, 
+                    select=ID:DEFAULT) 
+
 # desc stats
 library(dlookr) # install.packages("dlookr"), ref: https://cran.r-project.org/web/packages/dlookr/vignettes/EDA.html
-desc <- describe(credit_card_default)
+desc <- describe(ccd_focus)
 desc
 # described_varia…     n    na     mean      sd se_mean    IQR  skewness kurtosis   p00    p01    p05    p10    p20
 # <chr>            <int> <int>    <dbl>   <dbl>   <dbl>  <dbl>     <dbl>    <dbl> <dbl>  <dbl>  <dbl>  <dbl>  <dbl>
@@ -91,11 +95,12 @@ desc
 # 9 PAY_3            30000     0 -1.66e-1 1.20e+0 6.91e-3 1   e0  8.41e- 1   2.08      -2    -2     -2     -2     -1 
 # 10 PAY_4            30000     0 -2.21e-1 1.17e+0 6.75e-3 1   e0  1.00e+ 0   3.50      -2    -2     -2     -2     -1 
 
+# check if any fields have empties
 any(desc$n <max(desc$n))
-# [1] FALSE
+# [1] FALSE # false means all fields are filled
 
 library(dplyr) # install.packages("dplyr")
-credit_card_default %>%
+ccd_focus %>%
   group_by(SEX)  %>%
   describe(EDUCATION, MARRIAGE, AGE) 
 # described_varia…   SEX     n    na  mean    sd se_mean   IQR skewness kurtosis   p00   p01   p05   p10   p20   p25
@@ -109,8 +114,14 @@ credit_card_default %>%
 
 # run EDA report - install.packages("forecast")
 library(forecast)
-credit_card_default %>%
-  eda_paged_report(target = "DEFAULT", subtitle = "cc_default", 
+targ <- target_by(ccd_focus, DEFAULT)
+summary(relate(targ, AGE))
+plot(relate(targ, EDUCATION))
+
+ccd_focus["DEFAULT"][ccd_focus["DEFAULT"] == 0] <- 'n' # switch target to char
+ccd_focus["DEFAULT"][ccd_focus["DEFAULT"] == 1] <- 'y' # switch target to char
+ccd_focus %>%
+  eda_web_report(target = "DEFAULT", subtitle = "cc_default", 
                    output_dir = "./", output_file = "EDA.pdf", theme = "blue")
 
 
