@@ -9,12 +9,13 @@ credit_card_default_raw <- readRDS(my.file)
 
 ###### data cleaning based on provided field rules + logical assumptions
 
+###############################################
 ### LIMIT_BAL - positive numeric
 summary(credit_card_default_raw$LIMIT_BAL)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 # 10000   50000  140000  167484  240000 1000000 
 
-
+###############################################
 ### SEX - (1,2)
 summary(credit_card_default_raw$SEX)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -24,6 +25,7 @@ table(credit_card_default_raw$SEX)
 # 11888 18112 
 ##### no action necessary, appears clean
 
+###############################################
 ### EDUCATION - (1:4)
 summary(credit_card_default_raw$EDUCATION)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -34,6 +36,7 @@ table(credit_card_default_raw$EDUCATION)
 ##### action necessary: invalid values - (0,5,6) 
 
 
+###############################################
 ### MARRIAGE (1:3)
 summary(credit_card_default_raw$MARRIAGE)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -44,6 +47,7 @@ table(credit_card_default_raw$MARRIAGE)
 ##### action necessary: invalid values - (0) 
 
 
+###############################################
 ### AGE positive numeric, assume (18:120)
 summary(credit_card_default_raw$AGE)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -69,11 +73,12 @@ credit_card_default_raw %>%  # ref: https://www.marsja.se/r-count-the-number-of-
 ##### no action necessary, appears clean
 
 
+###############################################
 ### past payment (-1,1:9)
 # PAY_0->PAY_1 
 names(credit_card_default_raw)[names(credit_card_default_raw) == "PAY_0"] <- "PAY_1"
 summarise_all(subset(credit_card_default_raw, 
-                 select=PAY_1:PAY_6),min)
+                 select=PAY_0:PAY_6),min)
 # combine & summarise all 6 columns
 table(c(credit_card_default_raw$PAY_1,credit_card_default_raw$PAY_2,
        credit_card_default_raw$PAY_3,credit_card_default_raw$PAY_4,
@@ -83,6 +88,7 @@ table(c(credit_card_default_raw$PAY_1,credit_card_default_raw$PAY_2,
 ##### action necessary: invalid values - (-2,0) 
 
 
+###############################################
 ### bill amount - numeric, negative seems plausible in case of credit
 bill_amts <- c(credit_card_default_raw$BILL_AMT1,credit_card_default_raw$BILL_AMT2,
         credit_card_default_raw$BILL_AMT3,credit_card_default_raw$BILL_AMT4,
@@ -99,6 +105,7 @@ table(cut(as.numeric(bill_amts), c(-Inf,0, 10, 100,1000,10000,100000,Inf)))
 ##### no action necessary, appears clean
 
 
+###############################################
 ### previous payment - Positive numeric
 pay_amts <- c(credit_card_default_raw$PAY_AMT1,credit_card_default_raw$PAY_AMT2,
                credit_card_default_raw$PAY_AMT3,credit_card_default_raw$PAY_AMT4,
@@ -113,6 +120,7 @@ table(cut(as.numeric(pay_amts), c(-Inf,0, 10, 100,1000,10000,100000,Inf)))
 # (-Inf,0]  (0,10]  (10,100] (100,1e+03] (1e+03,1e+04] (1e+04,1e+05]  (1e+05, Inf] 
 # 36897       726      1253     26591         97455         16030         1048 
 ##### no action necessary, appears clean
+
 
 out.file <- paste(my.datapath,'credit_card_default_clean.RData',sep='');
 saveRDS(credit_card_default_raw, out.file)

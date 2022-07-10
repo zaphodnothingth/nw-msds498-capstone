@@ -96,7 +96,7 @@ desc
 # 10 PAY_4            30000     0 -2.21e-1 1.17e+0 6.75e-3 1   e0  1.00e+ 0   3.50      -2    -2     -2     -2     -1 
 
 # check if any fields have empties
-any(desc$n <max(desc$n))
+any(desc$na > 0)
 # [1] FALSE # false means all fields are filled
 
 library(dplyr) # install.packages("dplyr")
