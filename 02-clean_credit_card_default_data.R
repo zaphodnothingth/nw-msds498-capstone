@@ -1,3 +1,8 @@
+###########################################
+# notes
+# need to check where values should not be negative?
+###########################################
+
 ### Set wd, path and read file
 completePath<- rstudioapi::getActiveDocumentContext()$path
 nameOfMyFile <- sub(".*/", "", completePath)
@@ -78,7 +83,7 @@ credit_card_default_raw %>%  # ref: https://www.marsja.se/r-count-the-number-of-
 # PAY_0->PAY_1 
 names(credit_card_default_raw)[names(credit_card_default_raw) == "PAY_0"] <- "PAY_1"
 summarise_all(subset(credit_card_default_raw, 
-                 select=PAY_0:PAY_6),min)
+                 select=PAY_1:PAY_6),min)
 # combine & summarise all 6 columns
 table(c(credit_card_default_raw$PAY_1,credit_card_default_raw$PAY_2,
        credit_card_default_raw$PAY_3,credit_card_default_raw$PAY_4,

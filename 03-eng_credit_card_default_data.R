@@ -33,6 +33,15 @@ payments = subset(credit_card_default_raw,
 ccdc$payment_avg <- rowMeans(payments)
 
 # (4) Payment Ratio  - need to adjust for when bill is neg? 
+calc_ratio <- function(pay,bill) {
+  # neg or 0 bill means fully paid
+  if(bill <= 0){
+      return(1) 
+  }
+  ratio <- pay / bill
+  return(ratio)
+}
+
 ccdc$pay_ratio1 <- ccdc$PAY_AMT1/ccdc$BILL_AMT2
 ccdc$pay_ratio2 <- ccdc$PAY_AMT2/ccdc$BILL_AMT3
 ccdc$pay_ratio3 <- ccdc$PAY_AMT3/ccdc$BILL_AMT4
@@ -73,7 +82,8 @@ ccdc$payment_max <- rowMaxs(as.matrix(payments))
 # (12) max Delinquency
 pays = subset(credit_card_default_raw, 
                select=PAY_1:PAY_6)
-pays <- sapply(pays, function(x) replace(x, x %in% c(-2,-1), 0)) # replace neg vals
+# replace neg vals
+pays <- sapply(pays, function(x) replace(x, x %in% c(-2,-1), 0)) 
 
 ccdc$pay_max <- rowMaxs(as.matrix(pays))
 
@@ -84,7 +94,7 @@ ccdc$pay_max <- rowMaxs(as.matrix(pays))
 # remove raw variables
 ccdc_out <- select(ccdc, -c('ID':'AGE','PAY_1':'data.group'))
 # replace nan with 0
-ccdc_out <- sapply(ccdc_out, function(x) replace(x, is.nan(x), 0)) # replace neg vals
+ccdc_out <- sapply(ccdc_out, function(x) replace(x, is.nan(x), 0))
 
 
 out.file <- paste(my.datapath,'credit_card_default_eng_features.RData',sep='');
