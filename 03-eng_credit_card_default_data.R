@@ -1,6 +1,6 @@
 library(stargazer)
 library(dplyr) # install.packages("dplyr")
-my.stargazer_path <- './Stargazer/';
+my.stargazer_path <- './Stargazer/'; 
 
 ### Set wd, path and read file
 completePath<- rstudioapi::getActiveDocumentContext()$path
@@ -33,20 +33,34 @@ payments = subset(credit_card_default_raw,
 ccdc$payment_avg <- rowMeans(payments)
 
 # (4) Payment Ratio  - need to adjust for when bill is neg? 
-calc_ratio <- function(pay,bill) {
-  # neg or 0 bill means fully paid
-  if(bill <= 0){
-      return(1) 
-  }
-  ratio <- pay / bill
-  return(ratio)
-}
+###### get working as function?
+# calc_ratio <- function(pay, bill) {
+#   # neg or 0 bill means fully paid
+#   if (bill <= 0) {
+#       return(1)
+#   }
+#   return(pay / bill)
+# }
+# 
+# library(dplyr)
+# calc_ratio <- function(df, Col1, Col2, NewCol) {
+#   # neg or 0 bill means fully paid - avoid dividing by 0 or neg
+#   df %>%
+#     mutate(NewCol = if_else(
+#       Col2 <= 0, 1, # if
+#       Col1 / Col2
+#     ))
+# }
+# calc_ratio(ccdc, 'PAY_AMT1', 'BILL_AMT2', 'pay_ratio1')
 
-ccdc$pay_ratio1 <- ccdc$PAY_AMT1/ccdc$BILL_AMT2
-ccdc$pay_ratio2 <- ccdc$PAY_AMT2/ccdc$BILL_AMT3
-ccdc$pay_ratio3 <- ccdc$PAY_AMT3/ccdc$BILL_AMT4
-ccdc$pay_ratio4 <- ccdc$PAY_AMT4/ccdc$BILL_AMT5
-ccdc$pay_ratio5 <- ccdc$PAY_AMT5/ccdc$BILL_AMT6
+library(tibble)
+ccdc <- ccdc %>%
+  add_column(pay_ratio1 = if_else(.$BILL_AMT2 <= 0, 1, .$PAY_AMT1 / .$BILL_AMT2),
+   pay_ratio2 = if_else(.$BILL_AMT3 <= 0, 1, .$PAY_AMT2 / .$BILL_AMT3),
+   pay_ratio3 = if_else(.$BILL_AMT4 <= 0, 1, .$PAY_AMT3 / .$BILL_AMT4),
+   pay_ratio4 = if_else(.$BILL_AMT5 <= 0, 1, .$PAY_AMT4 / .$BILL_AMT5),
+   pay_ratio5 = if_else(.$BILL_AMT6 <= 0, 1, .$PAY_AMT5 / .$BILL_AMT6))
+
 
 # (5) Avg Payment Ratio 
 ratios = subset(ccdc, 
@@ -62,7 +76,7 @@ ccdc$util5 <- ccdc$BILL_AMT5/ccdc$LIMIT_BAL
 ccdc$util6 <- ccdc$BILL_AMT5/ccdc$LIMIT_BAL
 
 # (7) Avg Utilization 
-utils = subset(ccdc, 
+utils <- subset(ccdc, 
                 select=util1:util6)
 ccdc$util_avg <- rowMeans(utils)
 
@@ -80,7 +94,7 @@ ccdc$bill_max <- rowMaxs(as.matrix(bills))
 ccdc$payment_max <- rowMaxs(as.matrix(payments))
 
 # (12) max Delinquency
-pays = subset(credit_card_default_raw, 
+pays <- subset(credit_card_default_raw, 
                select=PAY_1:PAY_6)
 # replace neg vals
 pays <- sapply(pays, function(x) replace(x, x %in% c(-2,-1), 0)) 
@@ -102,6 +116,6 @@ saveRDS(ccdc_out, out.file)
 
 # output features with target to csv
 ccdc_out_wDefault <- select(ccdc, -c('ID':'AGE','PAY_1':'PAY_AMT6','u':'data.group'))
-# write.csv(ccdc_out_wDefault, "./Data/credit_card_default_eng.csv", row.names=TRUE)
+write.csv(ccdc_out_wDefault, "./Data/credit_card_default_eng.csv", row.names=TRUE)
 saveRDS(ccdc_out_wDefault, "./Data/credit_card_default_eng.RData")
 
