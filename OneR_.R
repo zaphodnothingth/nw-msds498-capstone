@@ -94,7 +94,7 @@ gc <- ccde;
 
 
 # Formula style call;
-model.1 <- OneR(DEFAULT ~ ., data=gc, verbose=TRUE);
+model.1 <- OneR(DEFAULT ~ ., data=gc, verbose=TRUE)
 # This suggests that essentially any model should reach the level of 70% 
 # accuracy.
 
@@ -109,7 +109,7 @@ summary(model.2)
 
 
 # Fit a model to a single attribute;
-model.3 <- OneR(DEFAULT ~ status.of.existing.checking.account, data=gc, verbose=TRUE);
+model.3 <- OneR(DEFAULT ~ ratio_avg, data=gc, verbose=TRUE);
 summary(model.3)
 
 # You can also use print() to print out the model;
