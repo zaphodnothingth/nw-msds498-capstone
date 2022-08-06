@@ -107,6 +107,10 @@ ccdc$pay_max <- rowMaxs(as.matrix(pays))
 
 # remove raw variables
 ccdc_out <- select(ccdc, -c('ID':'AGE','PAY_1':'data.group'))
+# remove intermediate variables
+drop <- c("util1", "util2", "util3", "util4", "util5", "util6" 
+          , "pay_ratio1", "pay_ratio2", "pay_ratio3", "pay_ratio4", "pay_ratio5")
+ccdc_out = ccdc_out[, !(names(ccdc_out) %in% drop)]
 # replace nan with 0
 ccdc_out <- sapply(ccdc_out, function(x) replace(x, is.nan(x), 0))
 
